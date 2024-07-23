@@ -30,7 +30,22 @@ function featuresAt(event, bbox, ctx, buffer) {
 
   const queryParams = {};
 
-  if (ctx.options.styles) queryParams.layers = ctx.options.styles.map(s => s.id).filter(id => ctx.map.getLayer(id) != null);
+  if (ctx.options.styles) queryParams.layers = [
+    ...ctx.options.styles.map(s => s.id).filter(id => ctx.map.getLayer(id) != null),
+
+    /**
+     * Biarri: Our modification to support "existingFeatureLayerIds"
+     * 
+     * It supports an additional option `existingFeatureLayerIds` to Mapbox Draw.
+     * If provided, this option should be a list of layer IDs; features matching
+     * these layers will be interactable. Previously only features specified using
+     * the `styles` parameter could be interactable, but it was not possible to
+     * provide an existing layer as a `styles` parameter, since Mapbox Draw tries
+     * to create layers for all the items in the `styles` parameter, causing
+     * an error for layers that already exist.
+     */ 
+    ...(ctx.options.existingFeatureLayerIds || []),
+  ];
 
   const features = ctx.map.queryRenderedFeatures(box, queryParams)
     .filter(feature => META_TYPES.indexOf(feature.properties.meta) !== -1);

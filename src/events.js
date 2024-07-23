@@ -265,5 +265,14 @@ export default function(ctx) {
     }
   };
 
+  /**
+   * Biarri: Our own modifications here.
+   * 
+   * It exposes an additional `getCurrentMode()` method that returns
+   * the actual current mode object, rather than just the name. This allows
+   * us to do things like `draw.ctx.events.getCurrentMode().mousedown(...)`.
+   */
+  api.getCurrentMode = () => currentMode;
+
   return api;
 }
